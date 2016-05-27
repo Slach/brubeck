@@ -139,7 +139,6 @@ parse_float(char *buffer, value_t *result, uint8_t *mods)
 
 int brubeck_statsd_msg_parse(struct brubeck_statsd_msg *msg, char *buffer, char *end)
 {
-    log_splunk("event=brubeck_statsd_msg_parse START");
 	*end = '\0';
 
 	/**
@@ -244,7 +243,6 @@ int brubeck_statsd_msg_parse(struct brubeck_statsd_msg *msg, char *buffer, char 
 
 
 		if (buffer[0] == '\0' || (buffer[0] == '\n' && buffer[1] == '\0')) {
-            log_splunk("event=brubeck_statsd_msg_parse FINISH");
 			return 0;
         }
 			
