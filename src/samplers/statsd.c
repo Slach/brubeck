@@ -153,12 +153,12 @@ int brubeck_statsd_msg_parse(struct brubeck_statsd_msg *msg, char *buffer, char 
 		while (*buffer != ':' && *buffer != '\0') {
 			/* Invalid metric, can't have a space */
 			if (*buffer == ' ')
-			    log_splunk_errno('buffer space');
+			    log_splunk_errno("buffer space");
 				return -1;
 			++buffer;
 		}
 		if (*buffer == '\0')
-            log_splunk_errno('buffer unexpected zero');
+            log_splunk_errno("buffer unexpected zero");
 			return -1;
 
 		msg->key_len = buffer - msg->key;
@@ -166,7 +166,7 @@ int brubeck_statsd_msg_parse(struct brubeck_statsd_msg *msg, char *buffer, char 
 
 		/* Corrupted metric. Graphite won't swallow this */
 		if (msg->key[msg->key_len - 1] == '.')
-            log_splunk_errno('buffer invalid msg->key last char .');
+            log_splunk_errno("buffer invalid msg->key last char .");
 			return -1;
 	}
 
@@ -182,7 +182,7 @@ int brubeck_statsd_msg_parse(struct brubeck_statsd_msg *msg, char *buffer, char 
 		buffer = parse_float(buffer, &msg->value, &msg->modifiers);
 
 		if (*buffer != '|')
-            log_splunk_errno('buffer !="|" ');
+            log_splunk_errno("buffer !='|' ");
 			return -1;
 
 		buffer++;
@@ -209,7 +209,7 @@ int brubeck_statsd_msg_parse(struct brubeck_statsd_msg *msg, char *buffer, char 
 					  }
 
 			default:
-                      log_splunk_errno('invalid in switch msg->type');
+                      log_splunk_errno("invalid in switch msg->type");
 					  return -1;
 		}
 
