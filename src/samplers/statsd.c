@@ -139,6 +139,7 @@ parse_float(char *buffer, value_t *result, uint8_t *mods)
 
 int brubeck_statsd_msg_parse(struct brubeck_statsd_msg *msg, char *buffer, char *end)
 {
+    log_splunk("event=brubeck_statsd_msg_parse START");
 	*end = '\0';
 
 	/**
@@ -152,9 +153,10 @@ int brubeck_statsd_msg_parse(struct brubeck_statsd_msg *msg, char *buffer, char 
 		msg->key_len = 0;
 		while (*buffer != ':' && *buffer != '\0') {
 			/* Invalid metric, can't have a space */
-			if (*buffer == ' ')
+			if (*buffer == ' ') {
 			    log_splunk("buffer space");
 				return -1;
+            }
 			++buffer;
 		}
 		if (*buffer == '\0')
@@ -165,9 +167,10 @@ int brubeck_statsd_msg_parse(struct brubeck_statsd_msg *msg, char *buffer, char 
 		*buffer++ = '\0';
 
 		/* Corrupted metric. Graphite won't swallow this */
-		if (msg->key[msg->key_len - 1] == '.')
+		if (msg->key[msg->key_len - 1] == '.') {
             log_splunk("buffer invalid msg->key last char .");
 			return -1;
+        }
 	}
 
 	/**
@@ -181,10 +184,10 @@ int brubeck_statsd_msg_parse(struct brubeck_statsd_msg *msg, char *buffer, char 
 		msg->modifiers = 0;
 		buffer = parse_float(buffer, &msg->value, &msg->modifiers);
 
-		if (*buffer != '|')
+		if (*buffer != '|') {
             log_splunk("buffer !='|' ");
 			return -1;
-
+        }
 		buffer++;
 	}
 
@@ -229,18 +232,20 @@ int brubeck_statsd_msg_parse(struct brubeck_statsd_msg *msg, char *buffer, char 
 			uint8_t dummy;
 
 			buffer = parse_float(buffer + 2, &sample_rate, &dummy);
-			if (sample_rate <= 0.0 || sample_rate > 1.0)
+			if (sample_rate <= 0.0 || sample_rate > 1.0) {
                 log_splunk("invalid sample_rate");
 				return -1;
-
+            }
 			msg->sample_freq = (1.0 / sample_rate);
 		} else {
 			msg->sample_freq = 1.0;
 		}
 
 
-		if (buffer[0] == '\0' || (buffer[0] == '\n' && buffer[1] == '\0'))
+		if (buffer[0] == '\0' || (buffer[0] == '\n' && buffer[1] == '\0')) {
+            log_splunk("event=brubeck_statsd_msg_parse FINISH");
 			return 0;
+        }
 			
         log_splunk("invalid buffer[0]");
 		return -1;
