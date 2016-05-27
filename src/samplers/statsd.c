@@ -153,10 +153,12 @@ int brubeck_statsd_msg_parse(struct brubeck_statsd_msg *msg, char *buffer, char 
 		while (*buffer != ':' && *buffer != '\0') {
 			/* Invalid metric, can't have a space */
 			if (*buffer == ' ')
+			    log_splunk('buffer space');
 				return -1;
 			++buffer;
 		}
 		if (*buffer == '\0')
+            log_splunk('buffer unexpected zero');
 			return -1;
 
 		msg->key_len = buffer - msg->key;
@@ -164,6 +166,7 @@ int brubeck_statsd_msg_parse(struct brubeck_statsd_msg *msg, char *buffer, char 
 
 		/* Corrupted metric. Graphite won't swallow this */
 		if (msg->key[msg->key_len - 1] == '.')
+            log_splunk('buffer invalid msg->key last char .');
 			return -1;
 	}
 
@@ -179,6 +182,7 @@ int brubeck_statsd_msg_parse(struct brubeck_statsd_msg *msg, char *buffer, char 
 		buffer = parse_float(buffer, &msg->value, &msg->modifiers);
 
 		if (*buffer != '|')
+            log_splunk('buffer !="|" ');
 			return -1;
 
 		buffer++;
@@ -205,6 +209,7 @@ int brubeck_statsd_msg_parse(struct brubeck_statsd_msg *msg, char *buffer, char 
 					  }
 
 			default:
+                      log_splunk('invalid in switch msg->type');
 					  return -1;
 		}
 
@@ -225,6 +230,7 @@ int brubeck_statsd_msg_parse(struct brubeck_statsd_msg *msg, char *buffer, char 
 
 			buffer = parse_float(buffer + 2, &sample_rate, &dummy);
 			if (sample_rate <= 0.0 || sample_rate > 1.0)
+                log_splunk('invalid sample_rate');
 				return -1;
 
 			msg->sample_freq = (1.0 / sample_rate);
@@ -236,6 +242,7 @@ int brubeck_statsd_msg_parse(struct brubeck_statsd_msg *msg, char *buffer, char 
 		if (buffer[0] == '\0' || (buffer[0] == '\n' && buffer[1] == '\0'))
 			return 0;
 			
+        log_splunk('invalid buffer[0]');
 		return -1;
 	}
 }
