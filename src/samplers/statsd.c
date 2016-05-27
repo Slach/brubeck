@@ -159,9 +159,10 @@ int brubeck_statsd_msg_parse(struct brubeck_statsd_msg *msg, char *buffer, char 
             }
 			++buffer;
 		}
-		if (*buffer == '\0')
+		if (*buffer == '\0') {
             log_splunk("buffer unexpected zero");
 			return -1;
+        }
 
 		msg->key_len = buffer - msg->key;
 		*buffer++ = '\0';
