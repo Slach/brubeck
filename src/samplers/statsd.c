@@ -230,7 +230,7 @@ int brubeck_statsd_msg_parse(struct brubeck_statsd_msg *msg, char *buffer, char 
 
 			buffer = parse_float(buffer + 2, &sample_rate, &dummy);
 			if (sample_rate <= 0.0 || sample_rate > 1.0)
-                log_splunk_errno('invalid sample_rate');
+                log_splunk_errno("invalid sample_rate");
 				return -1;
 
 			msg->sample_freq = (1.0 / sample_rate);
@@ -242,7 +242,7 @@ int brubeck_statsd_msg_parse(struct brubeck_statsd_msg *msg, char *buffer, char 
 		if (buffer[0] == '\0' || (buffer[0] == '\n' && buffer[1] == '\0'))
 			return 0;
 			
-        log_splunk_errno('invalid buffer[0]');
+        log_splunk_errno("invalid buffer[0]");
 		return -1;
 	}
 }
